@@ -11,6 +11,15 @@ jobs:
         # os: [ubuntu-latest, windows-latest, macOS-latest]
         os: [windows-latest]
     steps:
+    - name: Build Windows
+      if: contains(matrix.os, 'windows')
+      shell: powershell
+      run: |
+        dir "C:\\"
+        dir "C:\\Program Files\\MSBuild"
+        dir "C:\\Program Files (x86)\\MSBuild"
+        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp"
+        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0"
     - uses: actions/checkout@v1
     - name: Install MacOS dependencies
       if: contains(matrix.os, 'macOS')
@@ -44,19 +53,10 @@ jobs:
         cd build
         cmake ..
         make
-    - name: Pre-build Windows
-      if: contains(matrix.os, 'windows')
-      run: |
-        where dotnet
     - name: Build Windows
       if: contains(matrix.os, 'windows')
       shell: powershell
       env:
         VCTargetsPath: "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V120"
       run: |
-        dir "C:\\"
-        dir "C:\\Program Files\\MSBuild"
-        dir "C:\\Program Files (x86)\\MSBuild"
-        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp"
         dotnet msbuild Source\Dolphin.sln
-        # dotnet add package Microsoft.VSSDK.BuildTools --version 16.3.2099
