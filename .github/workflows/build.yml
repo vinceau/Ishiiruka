@@ -10,7 +10,12 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: install dependencies
-      run: sudo apt-get install -y libxi-dev
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y libxi-dev x11-xserver-utils
+        sudo apt-get install -y libavcodec libavformat libswscale libavutil
+        sudo apt-get install -y jack alsa
+        sudo apt-get install -y libudev libevdev
     - name: linux portable build
       run: |
         mkdir Build
