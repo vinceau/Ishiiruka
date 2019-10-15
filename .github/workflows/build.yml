@@ -20,6 +20,7 @@ jobs:
         dir "C:\\Program Files (x86)\\MSBuild"
         dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp"
         dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0"
+        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140"
     - uses: actions/checkout@v1
     - name: Install MacOS dependencies
       if: contains(matrix.os, 'macOS')
@@ -57,6 +58,6 @@ jobs:
       if: contains(matrix.os, 'windows')
       shell: powershell
       env:
-        VCTargetsPath: "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V120"
+        VCTargetsPath: "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140"
       run: |
         dotnet msbuild Source\Dolphin.sln
