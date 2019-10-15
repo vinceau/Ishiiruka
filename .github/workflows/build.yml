@@ -30,3 +30,10 @@ jobs:
         make
         cp -r ../Data/Sys/ Binaries/
         touch Binaries/portable.txt
+    - name: macos build
+      if: contains(matrix.os, 'macOS')
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make
