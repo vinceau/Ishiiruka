@@ -15,7 +15,8 @@ jobs:
       if: contains(matrix.os, 'windows')
       shell: powershell
       run: |
-        tree "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019"
+        dir "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise"
+        tree "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise"
     - uses: actions/checkout@v1
     - name: Install MacOS dependencies
       if: contains(matrix.os, 'macOS')
