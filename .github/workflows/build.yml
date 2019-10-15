@@ -1,0 +1,19 @@
+name: build
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: linux portable build
+      run: |
+        mkdir Build
+        cd Build
+        cmake .. -DLINUX_LOCAL_DEV=true
+        make
+        cp -r ../Data/Sys/ Binaries/
+        touch Binaries/portable.txt
