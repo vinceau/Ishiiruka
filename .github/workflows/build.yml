@@ -16,6 +16,8 @@ jobs:
       shell: powershell
       run: |
         dir "C:\\"
+        dir "C:\\Program Files"
+        dir "C:\\Program Files (x86)"
         dir "C:\\Program Files\\MSBuild"
         dir "C:\\Program Files (x86)\\MSBuild"
         dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp"
