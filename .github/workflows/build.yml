@@ -18,6 +18,8 @@ jobs:
         dir "C:\\"
         dir "C:\\Program Files"
         dir "C:\\Program Files (x86)"
+        dir "C:\\Program Files (x86)\\Microsoft Visual Studio"
+        dir "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0"
         dir "C:\\Program Files\\MSBuild"
         dir "C:\\Program Files (x86)\\MSBuild"
         dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp"
