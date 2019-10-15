@@ -20,7 +20,8 @@ jobs:
         sudo tar -xJf "MacOSX10.11.sdk.tar.xz"
         sudo rm "MacOSX10.11.sdk.tar.xz"
         ls "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
-        ls "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOS10.11.sdk"
+        pwd
+        # ls "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOS10.11.sdk"
     - name: Install Linux dependencies
       if: contains(matrix.os, 'ubuntu')
       run: |
