@@ -19,18 +19,18 @@ jobs:
         sudo wget "https://github.com/phracker/MacOSX-SDKs/releases/download/MacOSX10.11.sdk/MacOSX10.11.sdk.tar.xz"
         sudo tar -xJf "MacOSX10.11.sdk.tar.xz"
         sudo rm "MacOSX10.11.sdk.tar.xz"
+        ls "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
+        ls "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOS10.11.sdk"
     - name: Install Linux dependencies
       if: contains(matrix.os, 'ubuntu')
       run: |
         sudo apt-get update -y
         sudo apt install cmake pkg-config git libao-dev libasound2-dev libavcodec-dev libavformat-dev libbluetooth-dev libenet-dev libgtk2.0-dev liblzo2-dev libminiupnpc-dev libopenal-dev libpulse-dev libreadline-dev libsfml-dev libsoil-dev libsoundtouch-dev libswscale-dev libusb-1.0-0-dev libwxbase3.0-dev libwxgtk3.0-dev libxext-dev libxrandr-dev portaudio19-dev zlib1g-dev libudev-dev libevdev-dev "libpolarssl-dev|libmbedtls-dev" libcurl4-openssl-dev libegl1-mesa-dev libpng-dev qtbase5-private-dev
-    - name: Prepare build
-      run: |
-        mkdir Build
-        cd Build
     - name: Build portable Linux
       if: contains(matrix.os, 'ubuntu')
       run: |
+        mkdir Build
+        cd Build
         cmake .. -DLINUX_LOCAL_DEV=true
         make
         cp -r ../Data/Sys/ Binaries/
@@ -38,5 +38,7 @@ jobs:
     - name: Build MacOS
       if: contains(matrix.os, 'macOS')
       run: |
+        mkdir build
+        cd build
         cmake ..
         make
