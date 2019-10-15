@@ -22,6 +22,7 @@ jobs:
         dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0"
         dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140"
         dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140\\ImportBefore"
+        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140\\ImportBefore\\Default"
     - uses: actions/checkout@v1
     - name: Install MacOS dependencies
       if: contains(matrix.os, 'macOS')
