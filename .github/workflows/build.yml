@@ -9,6 +9,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
+    - name: install dependencies
+      run: sudo apt-get install -y libxi-dev
     - name: linux portable build
       run: |
         mkdir Build
