@@ -46,6 +46,9 @@ jobs:
         make
     - name: Build Windows
       if: contains(matrix.os, 'windows')
+      shell: powershell
       run: |
-        where Msbuild
-        where devenv
+        Get-Command ipconfig
+        Get-Command msbuild
+        Get-Command Msbuild
+        Get-Command devenv
