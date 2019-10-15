@@ -48,7 +48,4 @@ jobs:
       if: contains(matrix.os, 'windows')
       shell: powershell
       run: |
-        Get-Command ipconfig
-        Get-Command msbuild
-        Get-Command Msbuild
-        Get-Command devenv
+        Get-Command dotnet
