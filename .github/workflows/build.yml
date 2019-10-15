@@ -16,7 +16,7 @@ jobs:
       shell: powershell
       run: |
         dir "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\VC"
-        tree "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\VC"
+        tree "/A" "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\VC"
     - uses: actions/checkout@v1
     - name: Install MacOS dependencies
       if: contains(matrix.os, 'macOS')
