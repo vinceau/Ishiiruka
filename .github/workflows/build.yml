@@ -48,7 +48,7 @@ jobs:
       if: contains(matrix.os, 'windows')
       shell: powershell
       env:
-        VCTargetsPath: "D:\\Program Files (x86)\\MSBuild\Microsoft.Cpp\\v4.0\V120"
+        VCTargetsPath: "D:\\Program Files (x86)\\MSBuild\Microsoft.Cpp\\v4.0\\V120"
       run: |
         dotnet msbuild Source\Dolphin.sln
         # dotnet add package Microsoft.VSSDK.BuildTools --version 16.3.2099
