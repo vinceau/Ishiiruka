@@ -15,19 +15,7 @@ jobs:
       if: contains(matrix.os, 'windows')
       shell: powershell
       run: |
-        dir "C:\\"
-        dir "C:\\Program Files"
-        dir "C:\\Program Files (x86)"
-        dir "C:\\Program Files (x86)\\Microsoft Visual Studio"
-        dir "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019"
-        dir "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0"
-        dir "C:\\Program Files\\MSBuild"
-        dir "C:\\Program Files (x86)\\MSBuild"
-        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp"
-        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0"
-        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140"
-        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140\\ImportBefore"
-        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140\\ImportBefore\\Default"
+        tree "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019"
     - uses: actions/checkout@v1
     - name: Install MacOS dependencies
       if: contains(matrix.os, 'macOS')
