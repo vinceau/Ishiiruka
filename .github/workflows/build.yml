@@ -54,8 +54,8 @@ jobs:
       env:
         VCTargetsPath: "D:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V120"
       run: |
-        dir "D:\\"
-        dir "D:\\a"
-        dir "D:\\a\\Ishiiruka"
+        dir /adh "D:\\"
+        dir /adh "D:\\a"
+        dir /adh "D:\\a\\Ishiiruka"
         dotnet msbuild Source\Dolphin.sln
         # dotnet add package Microsoft.VSSDK.BuildTools --version 16.3.2099
