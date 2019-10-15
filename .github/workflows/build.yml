@@ -49,3 +49,4 @@ jobs:
       shell: powershell
       run: |
         Get-Command dotnet
+        dotnet add package Microsoft.VSSDK.BuildTools --version 16.3.2099
