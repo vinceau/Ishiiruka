@@ -48,5 +48,5 @@ jobs:
       if: contains(matrix.os, 'windows')
       shell: powershell
       run: |
-        dotnet tool install -g msbuild
+        dotnet msbuild Source\Dolphin.sln
         # dotnet add package Microsoft.VSSDK.BuildTools --version 16.3.2099
