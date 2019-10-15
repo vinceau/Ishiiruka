@@ -48,5 +48,5 @@ jobs:
       if: contains(matrix.os, 'windows')
       shell: powershell
       run: |
-        Get-Command dotnet
-        dotnet add package Microsoft.VSSDK.BuildTools --version 16.3.2099
+        dotnet tool install -g msbuild
+        # dotnet add package Microsoft.VSSDK.BuildTools --version 16.3.2099
