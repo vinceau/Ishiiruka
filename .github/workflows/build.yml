@@ -12,11 +12,12 @@ jobs:
     - name: install dependencies
       run: |
         sudo apt-get update -y
-        sudo apt-get install -y build-essential
-        # dependencies
-        sudo apt-get install -y libwxbase3.0-dev libwxgtk3.0-dev libgtk2.0-dev libxext-dev libreadline-dev libgl1-mesa-dev libevdev-dev libudev-dev
-        # optional dependencies
-        sudo apt-get install -y libasound-dev libpulse-dev libao-dev libopenal-dev libavcodec-dev libavformat-dev libswscale-dev libenet-dev liblzo2-dev libminiupnpc-dev libpolarssl-dev libsoil-dev libsoundtouch-dev libsfml-dev libusb-1.0-0-dev libbluetooth-dev libxrandr-dev
+        sudo apt-get install -y libxi-dev x11-xserver-utils
+        sudo apt-get install -y libavcodec-dev libavformat-dev libswscale-dev libavutil-dev
+        sudo apt-get install -y libsoundio-dev
+        sudo apt-get install -y libudev-dev libevdev-dev
+        sudo apt-get install -y build-essential libgtk2.0-dev
+        sudo apt install cmake pkg-config git libao-dev libasound2-dev libavcodec-dev libavformat-dev libbluetooth-dev libenet-dev libgtk2.0-dev liblzo2-dev libminiupnpc-dev libopenal-dev libpulse-dev libreadline-dev libsfml-dev libsoil-dev libsoundtouch-dev libswscale-dev libusb-1.0-0-dev libwxbase3.0-dev libwxgtk3.0-dev libxext-dev libxrandr-dev portaudio19-dev zlib1g-dev libudev-dev libevdev-dev "libpolarssl-dev|libmbedtls-dev" libcurl4-openssl-dev libegl1-mesa-dev libpng-dev qtbase5-private-dev
     - name: linux portable build
       run: |
         mkdir Build
