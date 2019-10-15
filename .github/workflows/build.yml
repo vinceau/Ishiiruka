@@ -8,7 +8,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        # os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [windows-latest]
     steps:
     - uses: actions/checkout@v1
     - name: Install MacOS dependencies
@@ -43,3 +44,8 @@ jobs:
         cd build
         cmake ..
         make
+    - name: Build Windows
+      if: contains(matrix.os, 'windows')
+      run: |
+        where Msbuild
+        where devenv
