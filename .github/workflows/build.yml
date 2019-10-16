@@ -16,7 +16,7 @@ jobs:
       shell: powershell
       run: |
         where npm
-        npm install --global windows-build-tools
+        npm --add-python-to-path='true' --debug install --global --production windows-build-tools@4.0.0
         dir "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\VC"
         tree "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\VC"
         tree "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\VC" /A
