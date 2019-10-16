@@ -3,32 +3,18 @@ name: build
 on: [push]
 
 jobs:
-  build:
-    name: Building on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macOS-latest]
+  # Linux build job
+  build_linux:
+    name: Building on Ubuntu
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Install MacOS dependencies
-      if: contains(matrix.os, 'macOS')
+    - name: Install dependencies
       run: |
-        sudo mkdir -p "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
-        cd "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
-        sudo wget "https://github.com/phracker/MacOSX-SDKs/releases/download/MacOSX10.11.sdk/MacOSX10.11.sdk.tar.xz"
-        sudo tar -xJf "MacOSX10.11.sdk.tar.xz"
-        sudo rm "MacOSX10.11.sdk.tar.xz"
-        ls "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
-        pwd
-        # ls "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOS10.11.sdk"
-    - name: Install Linux dependencies
-      if: contains(matrix.os, 'ubuntu')
-      run: |
+        # List of dependencies: https://wiki.dolphin-emu.org/index.php?title=Building_Dolphin_on_Linux
         sudo apt-get update -y
         sudo apt install cmake pkg-config git libao-dev libasound2-dev libavcodec-dev libavformat-dev libbluetooth-dev libenet-dev libgtk2.0-dev liblzo2-dev libminiupnpc-dev libopenal-dev libpulse-dev libreadline-dev libsfml-dev libsoil-dev libsoundtouch-dev libswscale-dev libusb-1.0-0-dev libwxbase3.0-dev libwxgtk3.0-dev libxext-dev libxrandr-dev portaudio19-dev zlib1g-dev libudev-dev libevdev-dev "libpolarssl-dev|libmbedtls-dev" libcurl4-openssl-dev libegl1-mesa-dev libpng-dev qtbase5-private-dev
-    - name: Build portable Linux
-      if: contains(matrix.os, 'ubuntu')
+    - name: Build Linux
       run: |
         mkdir Build
         cd Build
@@ -36,8 +22,27 @@ jobs:
         make
         cp -r ../Data/Sys/ Binaries/
         touch Binaries/portable.txt
+    - name: Persist artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: ubuntu-binary
+        path: Binaries
+
+  # Mac build job
+  build_mac:
+    name: Building on Mac
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install MacOS dependencies
+      run: |
+        sudo mkdir -p "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
+        cd "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
+        sudo wget "https://github.com/phracker/MacOSX-SDKs/releases/download/MacOSX10.11.sdk/MacOSX10.11.sdk.tar.xz"
+        sudo tar -xJf "MacOSX10.11.sdk.tar.xz"
+        sudo rm "MacOSX10.11.sdk.tar.xz"
+        ls "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
     - name: Build MacOS
-      if: contains(matrix.os, 'macOS')
       run: |
         mkdir build
         cd build
@@ -46,5 +51,5 @@ jobs:
     - name: Persist artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: ${{ matrix.os }} binaries
+        name: mac-binary
         path: Binaries
