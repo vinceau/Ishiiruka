@@ -58,7 +58,11 @@ jobs:
       if: contains(matrix.os, 'windows')
       shell: powershell
       env:
-        VCTargetsPath: "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V120\\"
+        VCTargetsPath: "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140\\"
         # VCTargetsPath: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\VC\\VCTargets"
       run: |
+        where msbuild
+        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\"
+        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\"
+        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140\\"
         dotnet msbuild Source\Dolphin.sln
