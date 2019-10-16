@@ -16,7 +16,7 @@ jobs:
       shell: powershell
       run: |
         where npm
-        npm --add-python-to-path='true' install --global --production windows-build-tools@4.0.0
+        npm --add-python-to-path='true' install --global --production windows-build-tools
         where msbuild
         # dir "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\VC"
         # tree "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\VC"
@@ -58,11 +58,11 @@ jobs:
       if: contains(matrix.os, 'windows')
       shell: powershell
       env:
-        VCTargetsPath: "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140\\"
+        VCTargetsPath: "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V141\\"
         # VCTargetsPath: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\VC\\VCTargets"
       run: |
         where msbuild
         dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\"
         dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\"
-        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V140\\"
+        dir "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V141\\"
         dotnet msbuild Source\Dolphin.sln
