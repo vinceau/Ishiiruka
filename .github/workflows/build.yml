@@ -22,11 +22,11 @@ jobs:
         make
         cp -r ../Data/Sys/ Binaries/
         touch Binaries/portable.txt
+        zip -rj Dolphin-linux.zip Binaries
     - name: Persist artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: ubuntu-binary
-        path: Binaries
+        path: Dolphin-linux.zip
 
   # Mac build job
   build_mac:
@@ -48,8 +48,8 @@ jobs:
         cd build
         cmake ..
         make
+        zip -rj Dolphin-mac.zip Binaries
     - name: Persist artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: mac-binary
-        path: Binaries
+        path: Dolphin-mac.zip
