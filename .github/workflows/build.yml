@@ -29,6 +29,7 @@ jobs:
     - name: Persist artifacts
       uses: actions/upload-artifact@v1
       with:
+        name: Dolphin-linux.zip
         path: Dolphin-linux.zip
 
   # Mac build job
@@ -56,4 +57,5 @@ jobs:
     - name: Persist artifacts
       uses: actions/upload-artifact@v1
       with:
+        name: Dolphin-mac.zip
         path: Dolphin-mac.zip
