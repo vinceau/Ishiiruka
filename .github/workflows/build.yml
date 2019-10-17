@@ -28,7 +28,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: Dolphin-linux
-        path: build/Binaries
+        path: Build/Binaries
 
   # Mac build job
   build_mac:
