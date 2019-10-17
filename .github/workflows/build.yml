@@ -54,4 +54,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: Dolphin-mac
-        path: build/Binaries/Dolphin.app
+        path: build/Binaries
