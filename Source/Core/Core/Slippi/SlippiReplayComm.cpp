@@ -81,12 +81,11 @@ void SlippiReplayComm::nextReplay()
 {
 	if (commFileSettings.queue.empty())
 	{
-		if (!wasEmpty) std::cout << "[NO_GAME]" << std::endl;
-		wasEmpty = true;
+		if (!queueWasEmpty) std::cout << "[NO_GAME]" << std::endl;
+		queueWasEmpty = true;
 		return;
 	}
 
-	wasEmpty = false;
 	// Increment queue position
 	commFileSettings.queue.pop();
 }
@@ -134,19 +133,19 @@ Slippi::SlippiGame *SlippiReplayComm::loadGame()
 
 void SlippiReplayComm::loadFile()
 {
-  // TODO: Consider even only checking file mod time every 250 ms or something? Not sure
-  // TODO: what the perf impact is atm
+  	// TODO: Consider even only checking file mod time every 250 ms or something? Not sure
+  	// TODO: what the perf impact is atm
 
 	u64 modTime = File::GetFileModTime(configFilePath);
 	if (modTime != 0 && modTime == configLastLoadModTime)
-  {
-    // TODO: Maybe be smarter than just using mod time? Look for other things that would
-    // TODO: indicate that file has changed and needs to be reloaded?
+	{
+		// TODO: Maybe be smarter than just using mod time? Look for other things that would
+		// TODO: indicate that file has changed and needs to be reloaded?
 		return;
-  }
+	}
 
-  WARN_LOG(EXPANSIONINTERFACE, "File change detected in comm file: %s", configFilePath.c_str());
-  configLastLoadModTime = modTime;
+	WARN_LOG(EXPANSIONINTERFACE, "File change detected in comm file: %s", configFilePath.c_str());
+	configLastLoadModTime = modTime;
 
 	// TODO: Maybe load file in a more intelligent way to save
 	// TODO: file operations
@@ -177,7 +176,7 @@ void SlippiReplayComm::loadFile()
 			WARN_LOG(EXPANSIONINTERFACE, "Comm file load error detected. Check file format");
 
 			// Reset in the case of read error. this fixes a race condition where file mod time changes but
-      // the file is not readable yet?
+      		// the file is not readable yet?
 			configLastLoadModTime = 0; 
 		}
 
@@ -193,7 +192,7 @@ void SlippiReplayComm::loadFile()
 	commFileSettings.outputOverlayFiles = res.value("outputOverlayFiles", false);
 	commFileSettings.isRealTimeMode = res.value("isRealTimeMode", false);
 
-	if (isFirstLoad)
+	if (commFileSettings.mode == "queue")
 	{
 		auto queue = res["queue"];
 		if (queue.is_array())
@@ -212,8 +211,8 @@ void SlippiReplayComm::loadFile()
 
 				commFileSettings.queue.push(w);
 			};
-		}
 
-		isFirstLoad = false;
+			queueWasEmpty = false;
+		}
 	}
 }
