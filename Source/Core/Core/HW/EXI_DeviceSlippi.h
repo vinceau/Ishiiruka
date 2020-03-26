@@ -79,6 +79,9 @@ class CEXISlippi : public IEXIDevice
 	// .slp File creation stuff
 	u32 writtenByteCount = 0;
 
+	//cout stuff
+	bool startFrameOutput = false;
+
 	// vars for metadata generation
 	time_t gameStartTime;
 	int32_t lastFrame;
@@ -127,7 +130,7 @@ class CEXISlippi : public IEXIDevice
 
 	std::unordered_map<u8, std::string> getNetplayNames();
 
-  std::vector<uint8_t> geckoList;
+	std::vector<uint8_t> geckoList;
 
 	bool isSoftFFW = false;
 	bool isHardFFW = false;
