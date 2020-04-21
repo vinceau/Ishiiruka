@@ -12,6 +12,7 @@ set(SRCS	ActionReplay.cpp
 			HotkeyManager.cpp
 			MemTools.cpp
 			Movie.cpp
+			SlippiTimer.cpp
 			NetPlayClient.cpp
 			NetPlayServer.cpp
 			PatchEngine.cpp
@@ -242,7 +243,11 @@ set(LIBS
 	${LZO}
 	sfml-network
 	sfml-system
+	SlippiPlaybackStatus
 	SlippiLib
+	vcdcom
+	vcddec
+	vcdenc
 	videoogl
 	videosoftware
 	z

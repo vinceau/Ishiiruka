@@ -39,7 +39,7 @@ class SlippiReplayComm
 	CommSettings getSettings();
 	void nextReplay();
 	bool isNewReplay();
-	Slippi::SlippiGame *loadGame();
+	std::unique_ptr<Slippi::SlippiGame> loadGame();
 
   private:
 	void loadFile();
@@ -50,6 +50,8 @@ class SlippiReplayComm
 	std::string previousReplayLoaded;
 	std::string previousCommandId;
 	int previousIndex;
+
+  u64 configLastLoadModTime;
 	
 	// Queue stuff
 	bool isFirstLoad = true;

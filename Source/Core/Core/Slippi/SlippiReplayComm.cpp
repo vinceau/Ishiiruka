@@ -1,6 +1,6 @@
 #include "SlippiReplayComm.h"
 #include "Common/FileUtil.h"
-
+#include "Common/CommonPaths.h"
 #include "Common/Logging/LogManager.h"
 #include "Core/ConfigManager.h"
 
@@ -86,7 +86,7 @@ void SlippiReplayComm::nextReplay()
 	commFileSettings.queue.pop();
 }
 
-Slippi::SlippiGame *SlippiReplayComm::loadGame()
+std::unique_ptr<Slippi::SlippiGame> SlippiReplayComm::loadGame()
 {
 	auto replayFilePath = getReplayPath();
 	INFO_LOG(EXPANSIONINTERFACE, "Attempting to load replay file %s", replayFilePath.c_str());
@@ -116,18 +116,33 @@ Slippi::SlippiGame *SlippiReplayComm::loadGame()
 
 		if (commFileSettings.outputOverlayFiles)
 		{
-			File::WriteStringToFile(ws.gameStation, "Slippi/out-station.txt");
-			File::WriteStringToFile(ws.gameStartAt, "Slippi/out-time.txt");
+			std::string dirpath = File::GetExeDirectory();
+			File::WriteStringToFile(ws.gameStation, dirpath + DIR_SEP + "Slippi/out-station.txt");
+			File::WriteStringToFile(ws.gameStartAt, dirpath + DIR_SEP + "Slippi/out-time.txt");
 		}
 
 		current = ws;
 	}
 
-	return result;
+	return std::move(result);
 }
 
 void SlippiReplayComm::loadFile()
 {
+  // TODO: Consider even only checking file mod time every 250 ms or something? Not sure
+  // TODO: what the perf impact is atm
+
+	u64 modTime = File::GetFileModTime(configFilePath);
+	if (modTime != 0 && modTime == configLastLoadModTime)
+  {
+    // TODO: Maybe be smarter than just using mod time? Look for other things that would
+    // TODO: indicate that file has changed and needs to be reloaded?
+		return;
+  }
+
+  WARN_LOG(EXPANSIONINTERFACE, "File change detected in comm file: %s", configFilePath.c_str());
+  configLastLoadModTime = modTime;
+
 	// TODO: Maybe load file in a more intelligent way to save
 	// TODO: file operations
 	std::string commFileContents;
@@ -155,6 +170,10 @@ void SlippiReplayComm::loadFile()
 		else
 		{
 			WARN_LOG(EXPANSIONINTERFACE, "Comm file load error detected. Check file format");
+
+			// Reset in the case of read error. this fixes a race condition where file mod time changes but
+      // the file is not readable yet?
+			configLastLoadModTime = 0; 
 		}
 
 		return;
