@@ -8,12 +8,14 @@
 #include <fstream>
 
 namespace Slippi {
+  const uint8_t EVENT_SPLIT_MESSAGE = 0x10;
   const uint8_t EVENT_PAYLOAD_SIZES = 0x35;
   const uint8_t EVENT_GAME_INIT = 0x36;
   const uint8_t EVENT_PRE_FRAME_UPDATE = 0x37;
   const uint8_t EVENT_POST_FRAME_UPDATE = 0x38;
   const uint8_t EVENT_GAME_END = 0x39;
   const uint8_t EVENT_FRAME_START = 0x3A;
+  const uint8_t EVENT_GECKO_LIST = 0x3D;
 
   const uint8_t GAME_INFO_HEADER_SIZE = 78;
   const uint8_t UCF_TOGGLE_SIZE = 8;
@@ -21,6 +23,8 @@ namespace Slippi {
   const int32_t GAME_FIRST_FRAME = -123;
   const uint8_t GAME_SHEIK_INTERNAL_ID = 0x7;
   const uint8_t GAME_SHEIK_EXTERNAL_ID = 0x13;
+
+  const uint32_t SPLIT_MESSAGE_INTERNAL_DATA_LEN = 512;
 
   static uint8_t* data;
 
@@ -82,11 +86,12 @@ namespace Slippi {
     std::unordered_map<uint8_t, PlayerSettings> players;
     uint8_t isPAL;
     uint8_t isFrozenPS;
+    std::vector<uint8_t> geckoCodes;
   } GameSettings;
 
   typedef struct {
     std::array<uint8_t, 4> version;
-    std::unordered_map<int32_t, FrameData> frameData;
+    std::unordered_map<int32_t, std::unique_ptr<FrameData>> frameData;
     GameSettings settings;
     bool areSettingsLoaded = false;
 
@@ -109,21 +114,23 @@ namespace Slippi {
   class SlippiGame
   {
   public:
-    static SlippiGame* FromFile(std::string path);
+    static std::unique_ptr<SlippiGame> FromFile(std::string path);
     bool AreSettingsLoaded();
     bool DoesFrameExist(int32_t frame);
-	std::array<uint8_t, 4> GetVersion();
+    std::array<uint8_t, 4> GetVersion();
     FrameData* GetFrame(int32_t frame);
     int32_t GetFrameCount();
     GameSettings* GetSettings();
     bool DoesPlayerExist(int8_t port);
     bool IsProcessingComplete();
   private:
-    Game* game;
-    std::ifstream* file;
+    std::unique_ptr<Game> game;
+    std::unique_ptr<std::ifstream> file;
     std::vector<uint8_t> rawData;
     std::string path;
     std::ofstream log;
+    std::vector<uint8_t> splitMessageBuf;
+    bool shouldResetSplitMessageBuf = false;
 
     bool isProcessingComplete = false;
     void processData();

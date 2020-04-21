@@ -97,29 +97,43 @@ namespace Slippi {
         continue;
       }
 
-      PlayerSettings* p = new PlayerSettings();
+      PlayerSettings p;
 
       // Get player settings
-      p->controllerPort = i;
-      p->characterId = playerInfo >> 24;
-      p->playerType = playerType;
-      p->characterColor = playerInfo & 0xFF;
-      p->nametag = playerNametags[i];
+      p.controllerPort = i;
+      p.characterId = playerInfo >> 24;
+      p.playerType = playerType;
+      p.characterColor = playerInfo & 0xFF;
+      p.nametag = playerNametags[i];
 
       //Add player settings to result
-      game->settings.players[i] = *p;
+      game->settings.players[i] = p;
     }
 
     game->settings.stage = gameInfoHeader[3] & 0xFFFF;
 
-    // Indicate settings loaded immediately if after version 1.6.0
-    // Sheik game info was added in this version and so we no longer
-    // need to wait
     auto majorVersion = game->version[0];
     auto minorVersion = game->version[1];
-    if (majorVersion > 1 || (majorVersion == 1 && minorVersion >= 6)) {
-	    game->areSettingsLoaded = true;
+    if (majorVersion > 3 || (majorVersion == 3 && minorVersion >= 1)) {
+      // After version 3.1.0 we added a dynamic gecko loading process. These
+      // are needed before starting the game. areSettingsLoaded will be set
+      // to true when they are received
+      game->areSettingsLoaded = false;
     }
+    else if (majorVersion > 1 || (majorVersion == 1 && minorVersion >= 6)) {
+      // Indicate settings loaded immediately if after version 1.6.0
+      // Sheik game info was added in this version and so we no longer
+      // need to wait
+      game->areSettingsLoaded = true;
+    }
+  }
+
+  void handleGeckoList(Game* game, uint32_t maxSize) {
+    game->settings.geckoCodes.clear();
+    game->settings.geckoCodes.insert(game->settings.geckoCodes.end(), data, data + maxSize);
+
+    // File is good to load
+    game->areSettingsLoaded = true;
   }
 
   void handleFrameStart(Game* game, uint32_t maxSize) {
@@ -129,19 +143,15 @@ namespace Slippi {
     int32_t frameCount = readWord(data, idx, maxSize, 0);
     game->frameCount = frameCount;
 
-    FrameData* frame = new FrameData();
-    if (game->frameData.count(frameCount)) {
-      // If this frame already exists, this is probably another player
-      // in this frame, so let's fetch it.
-      frame = &game->frameData[frameCount];
-    }
+    auto frameUniquePtr = std::make_unique<FrameData>();
+    FrameData* frame = frameUniquePtr.get();
 
     frame->frame = frameCount;
     frame->randomSeedExists = true;
     frame->randomSeed = readWord(data, idx, maxSize, 0);
 
     // Add frame to game
-    game->frameData[frameCount] = *frame;
+    game->frameData[frameCount] = std::move(frameUniquePtr);
   }
 
   void handlePreFrameUpdate(Game* game, uint32_t maxSize) {
@@ -151,62 +161,63 @@ namespace Slippi {
     int32_t frameCount = readWord(data, idx, maxSize, 0);
     game->frameCount = frameCount;
 
-    FrameData* frame = new FrameData();
+    auto frameUniquePtr = std::make_unique<FrameData>();
+    FrameData* frame = frameUniquePtr.get();
+    bool isNewFrame = true;
+
     if (game->frameData.count(frameCount)) {
       // If this frame already exists, this is probably another player
       // in this frame, so let's fetch it.
-      frame = &game->frameData[frameCount];
+      frame = game->frameData[frameCount].get();
+      isNewFrame = false;
     }
 
     frame->frame = frameCount;
 
-    PlayerFrameData* p = new PlayerFrameData();
+    PlayerFrameData p;
 
     uint8_t playerSlot = readByte(data, idx, maxSize, 0);
     uint8_t isFollower = readByte(data, idx, maxSize, 0);
 
     //Load random seed for player frame update
-    p->randomSeed = readWord(data, idx, maxSize, 0);
+    p.randomSeed = readWord(data, idx, maxSize, 0);
 
     //Load player data
-    p->animation = readHalf(data, idx, maxSize, 0);
-    p->locationX = readFloat(data, idx, maxSize, 0);
-    p->locationY = readFloat(data, idx, maxSize, 0);
-    p->facingDirection = readFloat(data, idx, maxSize, 0);
+    p.animation = readHalf(data, idx, maxSize, 0);
+    p.locationX = readFloat(data, idx, maxSize, 0);
+    p.locationY = readFloat(data, idx, maxSize, 0);
+    p.facingDirection = readFloat(data, idx, maxSize, 0);
 
     //Controller information
-    p->joystickX = readFloat(data, idx, maxSize, 0);
-    p->joystickY = readFloat(data, idx, maxSize, 0);
-    p->cstickX = readFloat(data, idx, maxSize, 0);
-    p->cstickY = readFloat(data, idx, maxSize, 0);
-    p->trigger = readFloat(data, idx, maxSize, 0);
-    p->buttons = readWord(data, idx, maxSize, 0);
+    p.joystickX = readFloat(data, idx, maxSize, 0);
+    p.joystickY = readFloat(data, idx, maxSize, 0);
+    p.cstickX = readFloat(data, idx, maxSize, 0);
+    p.cstickY = readFloat(data, idx, maxSize, 0);
+    p.trigger = readFloat(data, idx, maxSize, 0);
+    p.buttons = readWord(data, idx, maxSize, 0);
 
     //Raw controller information
-    p->physicalButtons = readHalf(data, idx, maxSize, 0);
-    p->lTrigger = readFloat(data, idx, maxSize, 0);
-    p->rTrigger = readFloat(data, idx, maxSize, 0);
+    p.physicalButtons = readHalf(data, idx, maxSize, 0);
+    p.lTrigger = readFloat(data, idx, maxSize, 0);
+    p.rTrigger = readFloat(data, idx, maxSize, 0);
 
     if (asmEvents[EVENT_PRE_FRAME_UPDATE] >= 59) {
-      p->joystickXRaw = readByte(data, idx, maxSize, 0);
+      p.joystickXRaw = readByte(data, idx, maxSize, 0);
     }
 
     uint32_t noPercent = 0xFFFFFFFF;
-    p->percent = readFloat(data, idx, maxSize, *(float*)(&noPercent));
+    p.percent = readFloat(data, idx, maxSize, *(float*)(&noPercent));
 
     // Add player data to frame
     std::unordered_map<uint8_t, PlayerFrameData>* target;
     target = isFollower ? &frame->followers : &frame->players;
 
     // Set the player data for the player or follower
-    target->operator[](playerSlot) = *p;
+    target->operator[](playerSlot) = p;
 
     // Add frame to game
-    game->frameData[frameCount] = *frame;
-
-    // Check if a player started as sheik and update
-    if (frameCount == GAME_FIRST_FRAME && p->internalCharacterId == GAME_SHEIK_INTERNAL_ID) {
-      game->settings.players[playerSlot].characterId = GAME_SHEIK_EXTERNAL_ID;
+    if (isNewFrame) {
+      game->frameData[frameCount] = std::move(frameUniquePtr);
     }
   }
 
@@ -216,11 +227,11 @@ namespace Slippi {
     //Check frame count
     int32_t frameCount = readWord(data, idx, maxSize, 0);
 
-    FrameData* frame = new FrameData();
+    FrameData* frame;
     if (game->frameData.count(frameCount)) {
       // If this frame already exists, this is probably another player
       // in this frame, so let's fetch it.
-      frame = &game->frameData[frameCount];
+      frame = game->frameData[frameCount].get();
     }
 
     // As soon as a post frame update happens, we know we have received all the inputs
@@ -333,7 +344,6 @@ namespace Slippi {
 
     // This function will process as much data as possible
     int startPos = (int)file->tellg();
-    //file = new std::ifstream(path, std::ios::in | std::ios::binary);
     file->seekg(startPos);
     if (startPos == 0) {
       file->seekg(0, std::ios::end);
@@ -343,7 +353,7 @@ namespace Slippi {
         return;
       }
 
-      int rawDataPos = getRawDataPosition(file);
+      int rawDataPos = getRawDataPosition(file.get());
       int rawDataLen = len - rawDataPos;
       if (rawDataLen < 2) {
         // If we don't have enough raw data yet to read the replay file, return
@@ -366,7 +376,7 @@ namespace Slippi {
         return;
       }
 
-      asmEvents = getMessageSizes(file, rawDataPos);
+      asmEvents = getMessageSizes(file.get(), rawDataPos);
     }
 
     // Read everything to the end
@@ -402,22 +412,51 @@ namespace Slippi {
       }
 
       data = (uint8_t*)&newData[newDataPos + 1];
+
+      uint8_t isSplitComplete = false;
+      uint32_t outerPayloadSize = payloadSize;
+
+      // Handle a split message, combining in until we possess the entire message
+      if (command == EVENT_SPLIT_MESSAGE) {
+        if (shouldResetSplitMessageBuf)
+        {
+          splitMessageBuf.clear();
+          shouldResetSplitMessageBuf = false;
+        }
+
+        int _ = 0;
+        uint16_t blockSize = readHalf(&data[SPLIT_MESSAGE_INTERNAL_DATA_LEN], _, payloadSize, 0);
+        splitMessageBuf.insert(splitMessageBuf.end(), data, data + blockSize);
+
+        isSplitComplete = data[SPLIT_MESSAGE_INTERNAL_DATA_LEN + 3];
+        if (isSplitComplete)
+        {
+          // Transform this message into a different message
+          command = data[SPLIT_MESSAGE_INTERNAL_DATA_LEN + 2];
+          data = &splitMessageBuf[0];
+          payloadSize = asmEvents[command];
+          shouldResetSplitMessageBuf = true;
+        }
+      }
+
       switch (command) {
       case EVENT_GAME_INIT:
-        handleGameInit(game, payloadSize);
+        handleGameInit(game.get(), payloadSize);
+        break;
+      case EVENT_GECKO_LIST:
+        handleGeckoList(game.get(), payloadSize);
         break;
       case EVENT_FRAME_START:
-        handleFrameStart(game, payloadSize);
+        handleFrameStart(game.get(), payloadSize);
         break;
       case EVENT_PRE_FRAME_UPDATE:
-        handlePreFrameUpdate(game, payloadSize);
+        handlePreFrameUpdate(game.get(), payloadSize);
         break;
       case EVENT_POST_FRAME_UPDATE:
-        handlePostFrameUpdate(game, payloadSize);
+        handlePostFrameUpdate(game.get(), payloadSize);
         break;
       case EVENT_GAME_END:
-        handleGameEnd(game, payloadSize);
-        //log.close();
+        handleGameEnd(game.get(), payloadSize);
         isProcessingComplete = true;
         break;
       case 0x55:
@@ -430,21 +469,23 @@ namespace Slippi {
         file->seekg(-remainingLen, std::ios::cur);
         return;
       }
+
+      payloadSize = isSplitComplete ? outerPayloadSize : payloadSize;
       newDataPos += payloadSize + 1;
     }
   }
 
-  SlippiGame* SlippiGame::FromFile(std::string path) {
-    SlippiGame* result = new SlippiGame();
-    result->game = new Game();
+  std::unique_ptr<SlippiGame> SlippiGame::FromFile(std::string path) {
+    auto result = std::make_unique<SlippiGame>();
+    result->game = std::make_unique<Game>();
     result->path = path;
 
 #ifdef _WIN32
     // On Windows, we need to convert paths to std::wstring to deal with UTF-8
     std::wstring convertedPath = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(path);
-    result->file = new std::ifstream(convertedPath, std::ios::in | std::ios::binary);
+    result->file = std::make_unique<std::ifstream>(convertedPath, std::ios::in | std::ios::binary);
 #else
-    result->file = new std::ifstream(path, std::ios::in | std::ios::binary);
+    result->file = std::make_unique<std::ifstream>(path, std::ios::in | std::ios::binary);
 #endif
 
     //result->log.open("log.txt");
@@ -463,7 +504,7 @@ namespace Slippi {
 
     //SlippiGame* result = processFile((uint8_t*)&rawData[0], rawDataLength);
 
-    return result;
+    return std::move(result);
   }
 
   bool SlippiGame::IsProcessingComplete() {
@@ -482,12 +523,12 @@ namespace Slippi {
 
   std::array<uint8_t, 4> SlippiGame::GetVersion()
   {
-	  return game->version;
+    return game->version;
   }
 
   FrameData* SlippiGame::GetFrame(int32_t frame) {
     // Get the frame we want
-    return &game->frameData.at(frame);
+    return game->frameData.at(frame).get();
   }
 
   int32_t SlippiGame::GetFrameCount() {

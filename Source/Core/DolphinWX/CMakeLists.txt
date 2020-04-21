@@ -66,6 +66,7 @@ set(GUI_SRCS
 	LogWindow.cpp
 	Main.cpp
 	MainMenuBar.cpp
+	PlaybackSlider.cpp
 	MainToolBar.cpp
 	MemcardManager.cpp
 	PatchAddEdit.cpp
@@ -90,7 +91,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 	set(WXLIBS ${WXLIBS} dl)
 endif()
 
-list(APPEND LIBS core uicommon)
+list(APPEND LIBS core SlippiPlaybackStatus uicommon)
 
 if(APPLE)
 	if(wxWidgets_FOUND)

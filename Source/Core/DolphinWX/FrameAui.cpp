@@ -41,6 +41,10 @@
 #include "DolphinWX/WxUtils.h"
 #include "DolphinWX/Debugger/DebuggerUIUtil.h"
 
+//#include "SlippiPlayback/SlippiPlayback.h"
+//std::unique_ptr<SlippiPlaybackStatus> g_playback_status;
+
+
 // ------------
 // Aui events
 
@@ -1052,3 +1056,4 @@ wxAuiNotebook* CFrame::GetNotebookFromId(u32 NBId)
 	}
 	return nullptr;
 }
+
