@@ -52,10 +52,10 @@ jobs:
         cmake ..
         make
       env:
-        CFLAGS: -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
-        CCFLAGS: -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
-        CXXFLAGS: -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
-        CPPFLAGS: -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+        CFLAGS: -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
+        CCFLAGS: -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
+        CXXFLAGS: -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
+        CPPFLAGS: -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
     - name: Persist artifacts
       uses: actions/upload-artifact@v1
       with:
