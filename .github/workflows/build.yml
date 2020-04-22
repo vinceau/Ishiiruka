@@ -51,6 +51,8 @@ jobs:
         cd build
         cmake ..
         make
+      env:
+        CPATH: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/
     - name: Persist artifacts
       uses: actions/upload-artifact@v1
       with:
