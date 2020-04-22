@@ -44,7 +44,7 @@ jobs:
         sudo tar -xJf "MacOSX10.11.sdk.tar.xz"
         # sudo rm "MacOSX10.11.sdk.tar.xz"
         # ls "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
-        brew install wxmac
+        brew install wxmac libquicktime
     - name: Build MacOS
       run: |
         mkdir build
